@@ -1,5 +1,4 @@
-import { sendContactCard, sendTypingAndMessage, sendWhatsappMessage, sendMultipleMessages } from '../services/whatsappServices.js';
-import { getLeadByChatIdService, createLeadService } from '../services/leadServices.js';
+import { sendWhatsappMessage, sendMultipleMessages } from '../services/whatsappServices.js';
 import { prepareCards } from '../services/cardServices.js';
 
 import config from '../config/config.js';
@@ -48,11 +47,10 @@ export const processMessage = async (req, res) => {
                                 if (cards.length > 1) {
                                     sendMultipleMessages(messageFrom, cards, delay, recipientPhoneId)
                                 } else {
-                                    await sendTypingAndMessage(messageFrom, response, recipientPhoneId);
-                                    // setTimeout(async () => {
-                                    //     await sendWhatsappMessage(messageFrom, response, recipientPhoneId);
-                                    //     console.log(`Single message from : ${messageFrom} - msg: ${response}`)
-                                    // }, 8000);
+                                    setTimeout(async () => {
+                                        await sendWhatsappMessage(messageFrom, response, recipientPhoneId);
+                                        console.log(`Single message from : ${messageFrom} - msg: ${response}`)
+                                    }, 8000);
                                 }
 
                             }
