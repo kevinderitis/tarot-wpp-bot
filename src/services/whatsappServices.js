@@ -4,6 +4,7 @@ import config from '../config/config.js';
 import { prepareCardName } from '../templates/cards.js';
 import FormData from 'form-data';
 import path from 'path';
+import fs from 'fs';
 
 const cwd = process.cwd();
 const rutaImagenes = path.join(cwd, 'public', 'images');
