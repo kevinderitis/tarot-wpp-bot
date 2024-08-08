@@ -21,6 +21,34 @@ export const verifyWebhook = async (req, res) => {
     }
 };
 
+
+const sendTypingAction = async (chatId, recipientPhoneId) => {
+    const payload = {
+        to: recipientPhoneId,
+        type: 'typing_on'
+    };
+
+    await axios.post(`https://your-whatsapp-api-url/v1/messages`, payload, {
+        headers: {
+            'Authorization': `Bearer your-access-token`,
+            'Content-Type': 'application/json'
+        }
+    });
+};
+
+const sendTypingAndMessage = async (chatId, text, recipientPhoneId) => {
+    try {
+        await sendTypingAction(chatId, recipientPhoneId);
+
+        await new Promise(resolve => setTimeout(resolve, 4000));
+
+        await sendWhatsappMessage(chatId, text, recipientPhoneId);
+
+    } catch (error) {
+        console.error('Error sending WhatsApp message:', error);
+    }
+};
+
 export const processMessage = async (req, res) => {
     const body = req.body;
     try {
@@ -49,10 +77,12 @@ export const processMessage = async (req, res) => {
                                 if (cards.length > 1) {
                                     sendMultipleMessages(messageFrom, cards, delay, recipientPhoneId)
                                 } else {
-                                    setTimeout(async () => {
-                                        await sendWhatsappMessage(messageFrom, response, recipientPhoneId);
-                                        console.log(`Single message from : ${messageFrom} - msg: ${response}`)
-                                    }, 8000);
+
+                                    await sendTypingAndMessage(messageFrom, response, recipientPhoneId);
+                                    // setTimeout(async () => {
+                                    //     await sendWhatsappMessage(messageFrom, response, recipientPhoneId);
+                                    //     console.log(`Single message from : ${messageFrom} - msg: ${response}`)
+                                    // }, 8000);
                                 }
 
                             }
