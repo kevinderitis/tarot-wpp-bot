@@ -125,7 +125,7 @@ export const sendMultipleMessages = (chatId, mensajes, tiempoDeEspera, recipient
                 const imagePath = path.join(rutaImagenes, imageName);
                 try {
                     const newImagePath = imagePath.replace(/\\/g, '/');
-                    const mediaId = await uploadMedia(newImagePath);
+                    const mediaId = await uploadMedia(newImagePath, recipientPhoneId);
                     await sendImageMessage(chatId, mediaId, mensaje.carta, recipientPhoneId);
                     console.log(`Image message from : ${chatId} - msg: ${mensaje.carta}`)
                     setTimeout(async () => {
