@@ -1,6 +1,5 @@
-import { sendContactCard, sendWhatsappMessage } from '../services/whatsappServices.js';
+import { sendContactCard, sendTypingAndMessage, sendWhatsappMessage, sendMultipleMessages } from '../services/whatsappServices.js';
 import { getLeadByChatIdService, createLeadService } from '../services/leadServices.js';
-import { sendMultipleMessages } from '../services/whatsappServices.js';
 import { prepareCards } from '../services/cardServices.js';
 
 import config from '../config/config.js';
@@ -18,34 +17,6 @@ export const verifyWebhook = async (req, res) => {
         } else {
             res.sendStatus(403);
         }
-    }
-};
-
-
-const sendTypingAction = async (chatId, recipientPhoneId) => {
-    const payload = {
-        to: recipientPhoneId,
-        type: 'typing_on'
-    };
-
-    await axios.post(`https://your-whatsapp-api-url/v1/messages`, payload, {
-        headers: {
-            'Authorization': `Bearer your-access-token`,
-            'Content-Type': 'application/json'
-        }
-    });
-};
-
-const sendTypingAndMessage = async (chatId, text, recipientPhoneId) => {
-    try {
-        await sendTypingAction(chatId, recipientPhoneId);
-
-        await new Promise(resolve => setTimeout(resolve, 4000));
-
-        await sendWhatsappMessage(chatId, text, recipientPhoneId);
-
-    } catch (error) {
-        console.error('Error sending WhatsApp message:', error);
     }
 };
 
@@ -77,7 +48,6 @@ export const processMessage = async (req, res) => {
                                 if (cards.length > 1) {
                                     sendMultipleMessages(messageFrom, cards, delay, recipientPhoneId)
                                 } else {
-
                                     await sendTypingAndMessage(messageFrom, response, recipientPhoneId);
                                     // setTimeout(async () => {
                                     //     await sendWhatsappMessage(messageFrom, response, recipientPhoneId);

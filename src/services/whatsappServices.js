@@ -121,6 +121,35 @@ const sendImageMessage = async (chatId, mediaId, caption, recipientPhoneId) => {
 
 };
 
+
+const sendTypingAction = async (chatId, recipientPhoneId) => {
+    const payload = {
+        to: chatId,
+        type: 'typing_on'
+    };
+
+    await axios.post(`${config.WHATSAPP_API_URL}/${recipientPhoneId}/media`, payload, {
+        headers: {
+            'Authorization': `Bearer your-access-token`,
+            'Content-Type': 'application/json'
+        }
+    });
+};
+
+export const sendTypingAndMessage = async (chatId, text, recipientPhoneId) => {
+    try {
+        await sendTypingAction(chatId, recipientPhoneId);
+
+        await new Promise(resolve => setTimeout(resolve, 4000));
+
+        await sendWhatsappMessage(chatId, text, recipientPhoneId);
+
+    } catch (error) {
+        console.error('Error sending WhatsApp message:', error);
+    }
+};
+
+
 export const sendMultipleMessages = (chatId, mensajes, tiempoDeEspera, recipientPhoneId) => {
     mensajes.forEach((mensaje, index) => {
         setTimeout(async () => {
