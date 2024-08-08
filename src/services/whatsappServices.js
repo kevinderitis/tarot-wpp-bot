@@ -75,7 +75,7 @@ export const healthCheck = async (msg) => {
     }
 };
 
-const uploadMedia = async (imagePath, token) => {
+const uploadMedia = async (imagePath) => {
     const form = new FormData();
     form.append('file', fs.createReadStream(imagePath));
     
@@ -116,7 +116,7 @@ export const sendMultipleMessages = (chatId, mensajes, tiempoDeEspera, recipient
                 const imagePath = path.join(rutaImagenes, imageName);
                 try {
                     const newImagePath = imagePath.replace(/\\/g, '/');
-                    const mediaId = await uploadMedia(newImagePath, token);
+                    const mediaId = await uploadMedia(newImagePath);
                     await sendImageMessage(chatId, mediaId, mensaje.carta);
                     console.log(`Image message from : ${chatId} - msg: ${mensaje.carta}`)
                     setTimeout(async () => {
