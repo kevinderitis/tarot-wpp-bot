@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leads</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Leads</h1>
+
+    <table id="tablaRegistros">
+        <thead>
+            <tr>
+                <th>_id</th>
+                <th>threadId</th>
+                <th>name</th>
+                <th>chatId</th>
+                <th>payment</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        async function cargarRegistros() {
+            const response = await fetch('/lead'); 
+            const registros = await response.json();
+            
+            const tablaBody = document.getElementById('tablaRegistros').getElementsByTagName('tbody')[0];
+            registros.forEach(registro => {
+                const newRow = tablaBody.insertRow();
+                newRow.innerHTML = `
+                    <td>${registro._id}</td>
+                    <td>${registro.threadId}</td>
+                    <td>${registro.name}</td>
+                    <td>${registro.chatId}</td>
+                    <td>
+                        <select class="editable" onchange="actualizarRegistro(this)" ${registro.payment ? '' : ''}>
+                            <option value="true" ${registro.payment ? 'selected' : ''}>true</option>
+                            <option value="false" ${registro.payment ? '' : 'selected'}>false</option>
+                        </select>
+                    </td>
+                `;
+            });
+        }
+
+        async function actualizarRegistro(selectElement) {
+            const cell = selectElement.parentElement;
+            const id = cell.parentElement.cells[0].innerText; 
+            const column = 'payment';
+            const value = selectElement.value;
+
+            try {
+                const newData = { [column]: value };
+
+                const response = await fetch(`/lead/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al actualizar el registro');
+                }
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+                cargarRegistros();
+            }
+        }
+
+        window.addEventListener('load', () => {
+            cargarRegistros();
+        });
+    </script>
+</body>
+</html>
