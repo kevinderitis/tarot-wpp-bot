@@ -90,7 +90,7 @@ const uploadMedia = async (imagePath) => {
     return response.data.media[0].id;
 };
 
-const sendImageMessage = async (chatId, mediaId, caption) => {
+const sendImageMessage = async (chatId, mediaId, caption, recipientPhoneId) => {
     const payload = {
         to: chatId,
         type: 'image',
@@ -100,7 +100,7 @@ const sendImageMessage = async (chatId, mediaId, caption) => {
         }
     };
 
-    await axios.post(`${config.WHATSAPP_API_URL}/messages`, payload, {
+    await axios.post(`${config.WHATSAPP_API_URL}/${recipientPhoneId}/messages`, payload, {
         headers: {
             'Authorization': `Bearer ${config.WHATSAPP_ACCESS_TOKEN}`,
             'Content-Type': 'application/json'
@@ -118,7 +118,7 @@ export const sendMultipleMessages = (chatId, mensajes, tiempoDeEspera, recipient
                 try {
                     const newImagePath = imagePath.replace(/\\/g, '/');
                     const mediaId = await uploadMedia(newImagePath);
-                    await sendImageMessage(chatId, mediaId, mensaje.carta);
+                    await sendImageMessage(chatId, mediaId, mensaje.carta, recipientPhoneId);
                     console.log(`Image message from : ${chatId} - msg: ${mensaje.carta}`)
                     setTimeout(async () => {
                         await sendWhatsappMessage(chatId, mensaje.texto, recipientPhoneId);
