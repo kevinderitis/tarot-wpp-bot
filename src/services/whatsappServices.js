@@ -100,6 +100,7 @@ const uploadMedia = async (imagePath, phoneId) => {
 
 const sendImageMessage = async (chatId, mediaId, caption, recipientPhoneId) => {
     const payload = {
+        messaging_product: "whatsapp",
         to: chatId,
         type: 'image',
         image: {
@@ -107,13 +108,17 @@ const sendImageMessage = async (chatId, mediaId, caption, recipientPhoneId) => {
             caption: caption
         }
     };
+    try {
+        await axios.post(`${config.WHATSAPP_API_URL}/${recipientPhoneId}/messages`, payload, {
+            headers: {
+                'Authorization': `Bearer ${config.WHATSAPP_ACCESS_TOKEN}`,
+                'Content-Type': 'application/json'
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
 
-    await axios.post(`${config.WHATSAPP_API_URL}/${recipientPhoneId}/messages`, payload, {
-        headers: {
-            'Authorization': `Bearer ${config.WHATSAPP_ACCESS_TOKEN}`,
-            'Content-Type': 'application/json'
-        }
-    });
 };
 
 export const sendMultipleMessages = (chatId, mensajes, tiempoDeEspera, recipientPhoneId) => {
@@ -144,4 +149,3 @@ export const sendMultipleMessages = (chatId, mensajes, tiempoDeEspera, recipient
         }, tiempoDeEspera * index);
     });
 };
-
