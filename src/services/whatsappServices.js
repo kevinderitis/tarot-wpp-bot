@@ -80,7 +80,7 @@ const uploadMedia = async (imagePath) => {
     const form = new FormData();
     form.append('file', fs.createReadStream(imagePath));
     
-    const response = await axios.post(`${config.WHATSAPP_API_URL}/${phoneId}/media`, form, {
+    const response = await axios.post(`${config.WHATSAPP_API_URL}/media`, form, {
         headers: {
             'Authorization': `Bearer ${config.WHATSAPP_ACCESS_TOKEN}`,
             ...form.getHeaders()
