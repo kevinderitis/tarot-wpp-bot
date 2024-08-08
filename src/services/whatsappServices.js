@@ -130,7 +130,7 @@ const sendTypingAction = async (chatId, recipientPhoneId) => {
 
     await axios.post(`${config.WHATSAPP_API_URL}/${recipientPhoneId}/media`, payload, {
         headers: {
-            'Authorization': `Bearer your-access-token`,
+            'Authorization': `Bearer ${config.WHATSAPP_ACCESS_TOKEN}`,
             'Content-Type': 'application/json'
         }
     });
