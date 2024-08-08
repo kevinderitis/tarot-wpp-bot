@@ -1,6 +1,6 @@
 import config from "../config/config.js";
 import { updateLeadNameByThreadId } from "../dao/leadDAO.js";
-import { appendDataToSheet } from "../services/googleServices.js";
+// import { appendDataToSheet } from "../services/googleServices.js";
 // import { sendPostRequest } from '../services/webServices.js';
 
 export const executeActionWithParams = async (action, params, threadId) => {
@@ -18,8 +18,8 @@ const saveName = async (threadId, params) => {
     let name = params.name;
     try {
         let lead = await updateLeadNameByThreadId(threadId, params.name)
-        await appendDataToSheet(config.SHEET_ID, [lead.name, lead.chatId, threadId])
-        await sendPostRequest(config.WEB_SERVICE_URL, { name: lead.name, phone: lead.chatId, threadId })
+        // await appendDataToSheet(config.SHEET_ID, [lead.name, lead.chatId, threadId])
+        // await sendPostRequest(config.WEB_SERVICE_URL, { name: lead.name, phone: lead.chatId, threadId })
         console.log('nombre guardado en db');
     } catch (error) {
         console.log('No se pudo guardar el nombre');
