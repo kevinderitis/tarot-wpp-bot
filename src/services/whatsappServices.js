@@ -6,8 +6,8 @@ import FormData from 'form-data';
 import path from 'path';
 import fs from 'fs';
 
-const cwd = process.cwd();
-const rutaImagenes = path.join(cwd, 'public', 'images');
+// const cwd = process.cwd();
+const rutaImagenes = path.join('public', 'images');
 
 export const sendWhatsappMessage = async (to, text, phoneId) => {
     try {
@@ -67,7 +67,7 @@ export const sendContactCard = async (to, phone, phoneId) => {
 
 export const healthCheck = async (msg) => {
     try {
-        if(msg === '/health'){
+        if (msg === '/health') {
             await sendSlackMessage('Todo nice!');
         }
     } catch (error) {
@@ -76,18 +76,26 @@ export const healthCheck = async (msg) => {
     }
 };
 
-const uploadMedia = async (imagePath) => {
+const uploadMedia = async (imagePath, phoneId) => {
     const form = new FormData();
     form.append('file', fs.createReadStream(imagePath));
-    
-    const response = await axios.post(`${config.WHATSAPP_API_URL}/media`, form, {
-        headers: {
-            'Authorization': `Bearer ${config.WHATSAPP_ACCESS_TOKEN}`,
-            ...form.getHeaders()
-        }
-    });
+    form.append('messaging_product', 'whatsapp');
 
-    return response.data.media[0].id;
+    try {
+        const response = await axios.post(`${config.WHATSAPP_API_URL}/${phoneId}/media`, form, {
+            headers: {
+                'Authorization': `Bearer ${config.WHATSAPP_ACCESS_TOKEN}`,
+                'Content-Type': 'image/jpeg',
+                ...form.getHeaders()
+            }
+        });
+
+        return response.data.id;
+    } catch (error) {
+        console.log(error);
+    }
+
+
 };
 
 const sendImageMessage = async (chatId, mediaId, caption, recipientPhoneId) => {
@@ -131,9 +139,9 @@ export const sendMultipleMessages = (chatId, mensajes, tiempoDeEspera, recipient
             } else {
                 let msg = mensaje.carta ? `La carta es: ${mensaje.carta} ${mensaje.texto}` : mensaje.texto;
                 console.log(`Message from : ${chatId} - msg: ${msg}`)
-                // await sendWhatsappMessage(chatId, msg, recipientPhoneId);
+                await sendWhatsappMessage(chatId, msg, recipientPhoneId);
             }
         }, tiempoDeEspera * index);
-        // typing
     });
 };
+
