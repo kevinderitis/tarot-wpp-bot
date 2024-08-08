@@ -39,6 +39,6 @@ export const prepareCards = texto => {
             resultado.push({ carta, texto: desc });
         }
     }
-
+    console.log(resultado)
     return resultado;
 };

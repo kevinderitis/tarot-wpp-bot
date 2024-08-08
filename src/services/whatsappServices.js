@@ -89,7 +89,7 @@ const uploadMedia = async (imagePath, token) => {
     return response.data.media[0].id;
 };
 
-const sendImageMessage = async (chatId, mediaId, token, caption) => {
+const sendImageMessage = async (chatId, mediaId, caption) => {
     const payload = {
         to: chatId,
         type: 'image',
@@ -117,7 +117,7 @@ export const sendMultipleMessages = (chatId, mensajes, tiempoDeEspera, recipient
                 try {
                     const newImagePath = imagePath.replace(/\\/g, '/');
                     const mediaId = await uploadMedia(newImagePath, token);
-                    await sendImageMessage(chatId, mediaId, token, mensaje.carta);
+                    await sendImageMessage(chatId, mediaId, mensaje.carta);
                     console.log(`Image message from : ${chatId} - msg: ${mensaje.carta}`)
                     setTimeout(async () => {
                         await sendWhatsappMessage(chatId, mensaje.texto, recipientPhoneId);
